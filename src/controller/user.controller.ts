@@ -7,6 +7,7 @@ import UserDAL from "../repository/user.repo";
 import { sendEmail } from "../utils/sendEmail";
 import {
   ADMIN_EMAIL,
+  APPROVED_CONFIRMATION,
   FOR_APPROVAL_REQUEST,
   SEND_SIGNUP_CONFIRMATION_TO_USER,
   SERVER_EMAIL,
@@ -14,21 +15,25 @@ import {
 import IJsonResponse from "../utils/jsonResponse";
 import { JWT_SALT_ROUNDS } from "../config/bcrypt.config";
 import { JWT_SECRET_KEY } from "../config/jwt.config";
+import { setUncaughtExceptionCaptureCallback } from "process";
 
 const userDAL = new UserDAL(User);
 
 export const signup = asyncWrap(async (req: Request, res: Response) => {
   const user: IUser = req.body;
+  // hash the password to store
   const hashedPassword = await bcrypt.hash(user.password, JWT_SALT_ROUNDS);
   user.password = hashedPassword;
   const newUser = await userDAL.create(user);
   if (!newUser) return res.status(400).json({ message: "Cannot create user" });
+  // send email to admin to approve
   await sendEmail({
     from: SERVER_EMAIL,
     to: ADMIN_EMAIL,
     subject: "Approval Request",
     html: FOR_APPROVAL_REQUEST,
   });
+  // send email to user
   await sendEmail({
     from: SERVER_EMAIL,
     to: newUser.email,
@@ -60,6 +65,7 @@ export const login = asyncWrap(async (req: Request, res: Response) => {
   if (!user)
     return res.status(400).json({ message: "No user with this email found" });
   const match = await bcrypt.compare(password, user.password);
+  // return if password not matched
   if (!match) {
     return res.status(403).json({ message: "Cannot login" });
   }
@@ -80,3 +86,54 @@ export const login = asyncWrap(async (req: Request, res: Response) => {
   console.log("Logged in");
   return res.status(200).json(successJsonMsg);
 });
+
+export const approveUser = asyncWrap(
+  async (req: Request | any, res: Response) => {
+    const isAdminId = req.user.id;
+    const admin = await userDAL.findById(isAdminId);
+    if (!admin) {
+      const noAdminFoundJsonResponse: IJsonResponse = {
+        message: "No admin with that id found",
+      };
+      return res.status(400).json(noAdminFoundJsonResponse);
+    }
+    if (!admin?.isAdmin) {
+      const notAdminJsonResponse: IJsonResponse = {
+        message: "You are not an admin",
+      };
+      return res.status(403).json(notAdminJsonResponse);
+    }
+    const userId = req.params.id;
+    const user = await userDAL.findById(userId);
+    if (!user) {
+      const noUserFoundJsonResponse: IJsonResponse = {
+        message: "No user with this id found",
+      };
+      return res.status(400).json(noUserFoundJsonResponse);
+    }
+    user.isApproved = true;
+    await user.save();
+    // send email to user that their email is approved
+    await sendEmail({
+      from: SERVER_EMAIL,
+      to: user.email,
+      subject: "Access request approved",
+      html: APPROVED_CONFIRMATION,
+    });
+    const successJsonResponse: IJsonResponse = {
+      message: "Successfully approved the user",
+      data: user,
+    };
+    res.status(200).json(successJsonResponse);
+  }
+);
+
+export const getUsers = asyncWrap(async (req: Request | any, res: Response) => {
+  const users = await userDAL.all();
+  const successJsonResponse: IJsonResponse = {
+    data: users,
+    message: "Successfully fetched all users",
+  };
+  return res.status(200).json(successJsonResponse);
+});
+

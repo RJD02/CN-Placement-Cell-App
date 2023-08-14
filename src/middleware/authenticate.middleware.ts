@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET_KEY } from "../config/jwt.config";
+import IJsonResponse from "../utils/jsonResponse";
 
 
 export const authenticateToken = (
@@ -9,7 +10,12 @@ export const authenticateToken = (
   next: NextFunction
 ) => {
   const authHeader = req.headers["authorization"];
-  console.log(req.headers);
+  if(!authHeader) {
+      const noHeaderJsonResponse: IJsonResponse = {
+          message: "No header/auth provided",
+      }
+      return res.status(400).json(noHeaderJsonResponse);
+  }
   if (authHeader.split(" ").length < 1) return res.sendStatus(400);
   const token = authHeader.split(" ")[1];
 

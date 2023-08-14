@@ -4,6 +4,7 @@ import { router as interviewRouter } from "./routes/interview.route";
 import { router as studentRouter } from "./routes/student.route";
 import { router as resultRouter } from "./routes/result.route";
 import {router as userRouter} from './routes/user.route'
+import User from "./models/user.model";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use("/interview", interviewRouter);
 app.use("/student", studentRouter);
 app.use("/result", resultRouter);
 app.use("/user", userRouter);
+
 
 const PORT = 8000;
 app.listen(PORT, () => console.log("Listening on port", PORT));

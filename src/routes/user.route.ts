@@ -3,9 +3,10 @@ import * as userController from '../controller/user.controller'
 import { authenticateToken } from '../middleware/authenticate.middleware';
 export const router = express.Router()
 
-router.use(authenticateToken)
-
 router.post('/signup', userController.signup);
 
 router.post('/login', userController.login);
-// router.get('/:id/approve',
+
+router.get('/:id/approve',authenticateToken, userController.approveUser);
+
+router.get('/',authenticateToken, userController.getUsers);
