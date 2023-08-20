@@ -1,10 +1,15 @@
 import express from "express";
-import * as interviewController from '../controller/interview.controller'
+import * as interviewController from "../controller/interview.controller";
 import { authenticateToken } from "../middleware/authenticate.middleware";
 export const router = express.Router();
 
 router.use(authenticateToken);
 
-router.get('/', interviewController.getAllInterviews);
+// get all interviews
+router.get("/", interviewController.getAllInterviews);
 
-router.post('/',  interviewController.createInterview);
+// create a new interview
+router.post("/", interviewController.createInterview);
+
+// fetch a interview with given id
+router.get("/:id", interviewController.getInterview);

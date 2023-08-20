@@ -15,12 +15,12 @@ import {
 import IJsonResponse from "../utils/jsonResponse";
 import { JWT_SALT_ROUNDS } from "../config/bcrypt.config";
 import { JWT_SECRET_KEY } from "../config/jwt.config";
-import { setUncaughtExceptionCaptureCallback } from "process";
 
 const userDAL = new UserDAL(User);
 
 export const signup = asyncWrap(async (req: Request, res: Response) => {
   const user: IUser = req.body;
+  console.log(user);
   // hash the password to store
   const hashedPassword = await bcrypt.hash(user.password, JWT_SALT_ROUNDS);
   user.password = hashedPassword;
@@ -68,6 +68,17 @@ export const login = asyncWrap(async (req: Request, res: Response) => {
   // return if password not matched
   if (!match) {
     return res.status(403).json({ message: "Cannot login" });
+  }
+  // is not approved send back a message
+  if (!user.isApproved) {
+    console.log("Not approved");
+    await sendEmail({
+      to: ADMIN_EMAIL,
+      from: SERVER_EMAIL,
+      subject: "Approval Request",
+      html: FOR_APPROVAL_REQUEST,
+    });
+    return res.status(200).json({ message: "User not approved yet" });
   }
   // send back the jwt token
   const now = new Date();
@@ -136,4 +147,3 @@ export const getUsers = asyncWrap(async (req: Request | any, res: Response) => {
   };
   return res.status(200).json(successJsonResponse);
 });
-

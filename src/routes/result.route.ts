@@ -5,10 +5,19 @@ export const router = express.Router();
 
 router.use(authenticateToken);
 
+// post to create new result
 router.post("/", resultController.createResult);
 
-router.get('/', resultController.getAllResult);
-router.get('/:id/students', resultController.getStudents);
-router.get('/:id/interviews', resultController.getInterviews);
+// get all results
+router.get("/", resultController.getAllResult);
 
-router.put('/:id/', resultController.updateResult);
+// fetch all students of interview with id
+router.get("/:id/students", resultController.getStudents);
+
+// fetch all interview of student with id
+router.get("/:id/interviews", resultController.getInterviews);
+
+// update a result with id
+router.put("/:id/", resultController.updateResult);
+
+

@@ -5,10 +5,13 @@ import { router as studentRouter } from "./routes/student.route";
 import { router as resultRouter } from "./routes/result.route";
 import {router as userRouter} from './routes/user.route'
 import User from "./models/user.model";
+import cors from 'cors';
 
 const app = express();
 
 app.use(express.json());
+app.use(cors())
+app.use(express.urlencoded());
 
 db();
 

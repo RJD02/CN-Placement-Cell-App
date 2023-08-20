@@ -85,4 +85,3 @@ export const updateResult = asyncWrap(async (req: Request, res: Response) => {
   };
   return res.status(200).json(successUpdateJsonResponse);
 });
-
