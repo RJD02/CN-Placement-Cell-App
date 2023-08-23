@@ -35,3 +35,19 @@ export const createStudent = asyncWrap(async (req: Request, res: Response) => {
     .status(200)
     .json({ student: newStudent, message: "Successfully created the student" });
 });
+
+export const getStudent = asyncWrap(async (req: Request, res: Response) => {
+  const studentId = req.params.id;
+  const student = await studentDAL.findById(studentId);
+  if (!student) {
+    const studentNotFoundJsonResponse: IJsonResponse = {
+      message: "Student with that id doesn't exists",
+    };
+    return res.status(400).json(studentNotFoundJsonResponse);
+  }
+  const successJsonResponse: IJsonResponse = {
+    message: "Successfully fetched the student",
+    data: student,
+  };
+  return res.status(200).json(successJsonResponse);
+});

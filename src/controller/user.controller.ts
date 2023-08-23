@@ -147,3 +147,35 @@ export const getUsers = asyncWrap(async (req: Request | any, res: Response) => {
   };
   return res.status(200).json(successJsonResponse);
 });
+
+export const getUnApprovedUsers = asyncWrap(
+  async (req: Request | any, res: Response) => {
+    const id = req.user.id;
+    console.log(id);
+    const adminUser = await userDAL.findById(id);
+    if (!adminUser) {
+      const noUserFound: IJsonResponse = {
+        message: "No user with that id found",
+      };
+      return res.status(403).json(noUserFound);
+    }
+    if (!adminUser.isAdmin) {
+      const notAdmin: IJsonResponse = {
+        message: "This url can only be accessed by admins",
+      };
+      return res.status(403).json(notAdmin);
+    }
+    const unApprovedUsers = await userDAL.find({ isApproved: false });
+    const successJsonResponse: IJsonResponse = {
+      data: unApprovedUsers,
+      message: "Successfully fetched all unapproved users",
+    };
+    return res.status(200).json(successJsonResponse);
+  }
+);
+
+export const downloadReport = asyncWrap(
+  async (req: Request, res: Response) => {
+
+  }
+);
