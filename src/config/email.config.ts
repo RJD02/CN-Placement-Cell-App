@@ -13,5 +13,5 @@ Hey user, we have just received a request from this email for gaining access to 
 export const APPROVED_CONFIRMATION = `
 <h1>Accepted</h1>
 <p>You're request was approved by the admin, no you can access the app</p>
-<p>Go <a href="localhost:8000/somewhere">here</a>
+<p>Go <a href="localhost:3000/approve">here</a>
 `

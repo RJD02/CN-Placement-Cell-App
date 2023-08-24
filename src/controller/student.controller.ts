@@ -38,7 +38,10 @@ export const createStudent = asyncWrap(async (req: Request, res: Response) => {
 
 export const getStudent = asyncWrap(async (req: Request, res: Response) => {
   const studentId = req.params.id;
-  const student = await studentDAL.findById(studentId);
+  const student = await studentDAL.findAndPopulate(
+    { _id: studentId },
+    { path: "scores" }
+  );
   if (!student) {
     const studentNotFoundJsonResponse: IJsonResponse = {
       message: "Student with that id doesn't exists",
@@ -50,4 +53,19 @@ export const getStudent = asyncWrap(async (req: Request, res: Response) => {
     data: student,
   };
   return res.status(200).json(successJsonResponse);
+});
+
+export const updateStudent = asyncWrap(async (req: Request, res: Response) => {
+  const studentId = req.params.id;
+  const student = req.body;
+  if (!student) return res.status(400).json({ message: "No student found" });
+  const studentRecord = await studentDAL.findById(studentId);
+  if (!studentRecord)
+    return res.status(400).json({ message: "No student with that id found" });
+  studentRecord.name = student.name || studentRecord.name;
+  studentRecord.college = student.college || studentRecord.college;
+  studentRecord.batch = student.batch || studentRecord.batch;
+  studentRecord.status = student.status || studentRecord.status;
+  await studentRecord.save();
+  return res.status(200).json({ data: studentRecord });
 });

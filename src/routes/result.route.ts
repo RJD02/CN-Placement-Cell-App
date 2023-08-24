@@ -3,7 +3,7 @@ import * as resultController from "../controller/result.controller";
 import { authenticateToken } from "../middleware/authenticate.middleware";
 export const router = express.Router();
 
-// router.use(authenticateToken);
+router.use(authenticateToken);
 
 // post to create new result
 router.post("/", resultController.createResult);

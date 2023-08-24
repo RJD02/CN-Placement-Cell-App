@@ -20,6 +20,5 @@ app.use("/student", studentRouter);
 app.use("/result", resultRouter);
 app.use("/user", userRouter);
 
-
 const PORT = 8000;
 app.listen(PORT, () => console.log("Listening on port", PORT));

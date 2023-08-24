@@ -15,3 +15,5 @@ router.post("/", studentController.createStudent);
 
 // fetch a student with id
 router.get("/:id", studentController.getStudent);
+
+router.put('/:id', studentController.updateStudent);
