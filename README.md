@@ -14,6 +14,7 @@ Server code for the full stack web application used to provide visual insights.
 * Nodemailer
 
 ## Setup
+* You need to setup admin, by creating a normal user then accessing db using gui or cli, and updating that user's isAdmin attribute to true
 1. Clone this repo inside your working directory
 ```bash
 git clone https://github.com/RJD02/CN-Placement-Cell-App-Server.git
