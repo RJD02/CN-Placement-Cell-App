@@ -2,7 +2,7 @@ export const SERVER_EMAIL = "server@codingninjas.com";
 export const ADMIN_EMAIL = "admin@codingninjas.com";
 export const FOR_APPROVAL_REQUEST = `
 Hey man, another one of your collegues wishes to join the website. To approve this, go
-<a href="http://localhost:8000/auth/login">Here</a>
+<a href="http://localhost:3000/approve">Here</a>
     `;
 
 export const SEND_SIGNUP_CONFIRMATION_TO_USER = `
