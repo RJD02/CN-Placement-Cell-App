@@ -1,6 +1,8 @@
 # Placement Cell(Server)
 Server code for the full stack web application used to provide visual insights.
 
+This is the server part of project, [here](https://github.com/RJD02/CN-Placement-Cell-App-Client/) is the client part.
+
 ## Key Features:
 1. Scaleable folder structure(separate controller, and routes)
 2. Data Access Layer introduced, so that db switching can be done without changing controllers
